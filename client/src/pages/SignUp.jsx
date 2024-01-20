@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -17,7 +18,7 @@ const SignUp = () => {
     try {
       setLoading(true);
       setError(false);
-
+      S;
       const response = await axios.post(
         "http://localhost:3000/api/auth/signup",
         formData
@@ -28,6 +29,7 @@ const SignUp = () => {
       // if (response.data.error) {
       //   setError(true);
       // }
+      navigate("/sign-in");
     } catch (error) {
       setLoading(false);
       setError(true);
