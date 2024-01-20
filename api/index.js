@@ -3,6 +3,12 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+import cors from "cors";
+
+const app = express();
+
+app.use(cors());
+
 dotenv.config();
 
 mongoose
@@ -13,8 +19,6 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
-
-const app = express();
 
 app.use(express.json());
 
