@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const SignIn = () => {
-  const [formData, setFormData] = useState({});
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
+
+  const [formData, setFormData] = useState({});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -16,8 +24,7 @@ const SignIn = () => {
     e.preventDefault();
 
     try {
-      setLoading(true);
-      setError(false);
+      dispatch(signInStart());
 
       const response = await axios.post(
         "http://localhost:3000/api/auth/signin",
@@ -25,15 +32,29 @@ const SignIn = () => {
       );
       console.log("Server response:", response.data);
 
-      setLoading(false);
-      // if (response.data.error) {
-      //   setError(true);
-      // }
+      if (response.statusText == "OK") {
+        dispatch(signInSuccess(response.data));
+      }
+
       navigate("/");
     } catch (error) {
-      setLoading(false);
-      setError(true);
       console.error("Error Submitting", error);
+
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        const errorMessage = error.response.data.message;
+        console.log("Server Error Status:", error.response.status);
+        console.log("Server Error Message:", errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log("No response received from the server");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error Message:", error.message);
+      }
+
+      dispatch(signInFailure(error.response.data.message));
     }
   };
 
@@ -69,7 +90,16 @@ const SignIn = () => {
             <span className="text-blue-500">Sign up</span>
           </Link>
         </div>
-        <p className="text-red-700 mt-5">{error && "Something went wrong!"}</p>
+        <p className="text-red-700 mt-5">
+          {error ? (
+            <>
+              <pre>{JSON.stringify(error, null, 2)}</pre>
+              {error.response?.data?.message && "Something went wrong!"}
+            </>
+          ) : (
+            ""
+          )}
+        </p>
       </div>
     </>
   );
