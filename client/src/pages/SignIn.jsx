@@ -15,6 +15,7 @@ const SignIn = () => {
   const { loading, error } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -46,6 +47,8 @@ const SignIn = () => {
         const errorMessage = error.response.data.message;
         console.log("Server Error Status:", error.response.status);
         console.log("Server Error Message:", errorMessage);
+
+        setErrorMessage(errorMessage);
       } else if (error.request) {
         // The request was made but no response was received
         console.log("No response received from the server");
@@ -91,14 +94,7 @@ const SignIn = () => {
           </Link>
         </div>
         <p className="text-red-700 mt-5">
-          {error ? (
-            <>
-              <pre>{JSON.stringify(error, null, 2)}</pre>
-              {error.response?.data?.message && "Something went wrong!"}
-            </>
-          ) : (
-            ""
-          )}
+          {errorMessage == "" ? "" : errorMessage}
         </p>
       </div>
     </>
