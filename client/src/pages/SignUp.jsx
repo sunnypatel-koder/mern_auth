@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const [error, setError] = useState(false);
@@ -22,9 +23,9 @@ const SignUp = () => {
         "http://localhost:3000/api/auth/signup",
         formData
       );
+      setLoading(false);
       console.log("Server response:", response.data);
 
-      setLoading(false);
       // if (response.data.error) {
       //   setError(true);
       // }
@@ -69,6 +70,7 @@ const SignUp = () => {
           >
             {loading ? "Loading..." : "Sign Up"}
           </button>
+          <OAuth />
         </form>
         <div className=" flex gap-2 mt-5">
           <p>Have an account?</p>
