@@ -7,6 +7,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import app from "../firebase";
+import axios from "axios";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -57,13 +58,41 @@ const Profile = () => {
     );
   };
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const userId = currentUser._id;
+
+    console.log(userId);
+
+    try {
+      const res = await fetch(
+        `http://localhost:3000/api/user/update/${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      const data = await res.json();
+      console.log("hello", data);
+    } catch (err) {
+      // console.log(err);
+    }
+  };
+
   return (
     <>
       <div className="p-3 max-w-lg mx-auto">
         <h1 className="text-3xl font-semibold text-center my-7">
           Profile Section
         </h1>
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             ref={fileRef}
             type="file"
@@ -99,6 +128,7 @@ const Profile = () => {
             id="username"
             placeholder="Username"
             className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
           />
           <input
             defaultValue={currentUser.email}
@@ -106,12 +136,14 @@ const Profile = () => {
             id="email"
             placeholder="Email"
             className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
           />
           <input
             type="password"
             id="password"
             placeholder="Password"
             className="bg-slate-100 rounded-lg p-3"
+            onChange={handleChange}
           />
           <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-85">
             Update
