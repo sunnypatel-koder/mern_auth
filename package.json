@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "nodemon api/index.js",
     "start": "node api/index.js",
-    "build":"npm install && npm install --prefix client && npm run build --prefix client"
+    "install-client": "npm install --prefix client",
+    "build-client": "npm run build --prefix client",
+    "build": "npm install && npm run install-client && npm run build-client"
   },
   "keywords": [],
   "author": "",
